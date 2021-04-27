@@ -1,4 +1,5 @@
 anat	fl	3D	t1_	T1w	
+anat	_tfl	3D	t1_mprage	T1w	
 anat	tfl	3D	mprage	T1w	
 anat	mdeft	3D	mdeft	T1w	
 anat	spc	3D	space	T1w	

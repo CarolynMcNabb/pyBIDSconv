@@ -983,6 +983,7 @@ class GetDCMinfo:
 
         acq_name_list = [''] * len(uniques)
         rec_name_list = [''] * len(uniques)
+        dir_name_list = [''] * len(uniques)
 
         # create lower case versions of lists
         un_seq_l = [item.lower() for item in un_seq]
@@ -1084,7 +1085,7 @@ class GetDCMinfo:
         # go to next step
         # x = wx.App()
         frame = CheckSeqs(un_seq, scantype_list, exclusion_array, nrvols_array, subjectnumber, subjectgroup,
-                          sessionnumber, subjtext2log, acq_name_list, rec_name_list, label_list, dcmfiles, pathdicom,
+                          sessionnumber, subjtext2log, acq_name_list, rec_name_list, dir_name_list, label_list, dcmfiles, pathdicom,
                           outputdir, it_list2, acq_time, patinfo, un_echo)
         frame.Show(True)
 
@@ -1109,7 +1110,7 @@ class GetDCMinfo:
 
 
 class CheckSeqs(wx.Frame):
-    def __init__(self, un_seq, scantype_list, exclusion_array, nrvols_array, subjectnumber, subjectgroup, sessionnumber, subjtext2log, acq_name_list, rec_name_list, label_list, dcmfiles, pathdicom, outputdir, it_list2, acq_time, patinfo, un_echo):
+    def __init__(self, un_seq, scantype_list, exclusion_array, nrvols_array, subjectnumber, subjectgroup, sessionnumber, subjtext2log, acq_name_list, rec_name_list, dir_name_list, label_list, dcmfiles, pathdicom, outputdir, it_list2, acq_time, patinfo, un_echo):
         wx.Frame.__init__(self, None)
 
         # default colours
@@ -1145,6 +1146,7 @@ class CheckSeqs(wx.Frame):
 
         self.acq_name_list = acq_name_list
         self.rec_name_list = rec_name_list
+        self.dir_name_list = dir_name_list
         self.label_list = label_list
         self.exclusion_array = exclusion_array
         self.dcmfiles = dcmfiles
@@ -1321,11 +1323,14 @@ class CheckSeqs(wx.Frame):
         t = wx.StaticText(self.panel, -1, label="_rec-", pos=(480, self.vertshift*2/3))
         t.SetFont(headerfont)
         t.SetForegroundColour(self.bluecolor)
+        t = wx.StaticText(self.panel, -1, label="_dir-", pos=(690, self.vertshift*2/3))
+        t.SetFont(headerfont)
+        t.SetForegroundColour(self.bluecolor)
         t = wx.StaticText(self.panel, -1, label="_label", pos=(580, self.vertshift*2/3))
         t.SetFont(headerfont)
         t.SetForegroundColour(self.bluecolor)
 
-        t = wx.StaticText(self.panel, -1, label="Ref", pos=(690, self.vertshift*2/3))
+        t = wx.StaticText(self.panel, -1, label="Ref", pos=(800, self.vertshift*2/3))
         t.SetFont(headerfont)
         t.SetForegroundColour(self.fontcolor)
         t = wx.StaticText(self.panel, -1, label="Nr", pos=(780, self.vertshift*2/3))
@@ -1350,6 +1355,7 @@ class CheckSeqs(wx.Frame):
         self.run = {}
         self.acq = {}
         self.rec = {}
+        self.dir = {}
         self.label = {}
         self.ref = {}
         self.new = []
@@ -1424,6 +1430,7 @@ class CheckSeqs(wx.Frame):
                 self.rec[i].SetValue(self.rec_name_list[i])
                 self.rec[i].SetForegroundColour(self.exccol[self.exclusion_array[i]])
                 self.rec[i].SetBackgroundColour(self.optboxbackgroundcolor)
+                
 
                 self.label[i] = wx.ComboBox(self.panel, pos=(580, self.vertshift + 40 * i - 5),
                                             size=(90, 30), name='lab' + str(i))
@@ -1432,7 +1439,7 @@ class CheckSeqs(wx.Frame):
                 self.label[i].SetForegroundColour(self.exccol[self.exclusion_array[i]])
                 self.label[i].SetBackgroundColour(self.boxbackgroundcolor)
 
-                self.ref[i] = wx.TextCtrl(self.panel, pos=(690, self.vertshift+40*i-5), size=(40, 25), name='r'+str(i))
+                self.ref[i] = wx.TextCtrl(self.panel, pos=(800, self.vertshift+40*i-5), size=(40, 25), name='r'+str(i))
                 self.ref[i].SetForegroundColour(self.exccol[self.exclusion_array[i]])
                 self.ref[i].SetBackgroundColour(self.boxbackgroundcolor)
                 self.ref[i].Hide()
@@ -1471,7 +1478,7 @@ class CheckSeqs(wx.Frame):
                 self.label[i].SetForegroundColour(self.exccol[self.exclusion_array[i]])
                 self.label[i].SetBackgroundColour(self.boxbackgroundcolor)
 
-                self.ref[i] = wx.TextCtrl(self.panel, pos=(690, self.vertshift+40*i-5), size=(40, 25), name='r'+str(i))
+                self.ref[i] = wx.TextCtrl(self.panel, pos=(800, self.vertshift+40*i-5), size=(40, 25), name='r'+str(i))
                 self.ref[i].SetForegroundColour(self.exccol[self.exclusion_array[i]])
                 self.ref[i].SetBackgroundColour(self.boxbackgroundcolor)
                 self.ref[i].Hide()
@@ -1500,6 +1507,12 @@ class CheckSeqs(wx.Frame):
                 self.rec[i].SetValue(self.rec_name_list[i])
                 self.rec[i].SetForegroundColour(self.exccol[self.exclusion_array[i]])
                 self.rec[i].SetBackgroundColour(self.optboxbackgroundcolor)
+                
+                self.dir[i] = wx.TextCtrl(self.panel, pos=(690, self.vertshift+40*i-5), size=(80, 25),
+                                          name='dir'+str(i))
+                self.dir[i].SetValue(self.dir_name_list[i])
+                self.dir[i].SetForegroundColour(self.exccol[self.exclusion_array[i]])
+                self.dir[i].SetBackgroundColour(self.optboxbackgroundcolor)
 
                 self.label[i] = wx.ComboBox(self.panel, pos=(580, self.vertshift + 40 * i - 5),
                                             size=(90, 30), name='lab' + str(i))
@@ -1508,7 +1521,7 @@ class CheckSeqs(wx.Frame):
                 self.label[i].SetForegroundColour(self.exccol[self.exclusion_array[i]])
                 self.label[i].SetBackgroundColour(self.boxbackgroundcolor)
 
-                self.ref[i] = wx.TextCtrl(self.panel, pos=(690, self.vertshift+40*i-5), size=(40, 25), name='r'+str(i))
+                self.ref[i] = wx.TextCtrl(self.panel, pos=(800, self.vertshift+40*i-5), size=(40, 25), name='r'+str(i))
                 self.ref[i].SetForegroundColour(self.exccol[self.exclusion_array[i]])
                 self.ref[i].SetBackgroundColour(self.boxbackgroundcolor)
                 self.ref[i].Hide()
@@ -1546,7 +1559,7 @@ class CheckSeqs(wx.Frame):
                 self.label[i].SetForegroundColour(self.exccol[self.exclusion_array[i]])
                 self.label[i].SetBackgroundColour(self.boxbackgroundcolor)
 
-                self.ref[i] = wx.TextCtrl(self.panel, pos=(690, self.vertshift+40*i-5), size=(40, 25), name='r'+str(i))
+                self.ref[i] = wx.TextCtrl(self.panel, pos=(800, self.vertshift+40*i-5), size=(40, 25), name='r'+str(i))
                 self.ref[i].Show()
                 self.ref[i].SetValue(str(refvalue[i]))
                 self.ref[i].SetForegroundColour(self.exccol[self.exclusion_array[i]])
@@ -1591,7 +1604,7 @@ class CheckSeqs(wx.Frame):
                 self.label[i].Clear()
                 self.label[i].Hide()
 
-                self.ref[i] = wx.TextCtrl(self.panel, pos=(690, self.vertshift+40*i-5), size=(40, 25), name='r'+str(i))
+                self.ref[i] = wx.TextCtrl(self.panel, pos=(800, self.vertshift+40*i-5), size=(40, 25), name='r'+str(i))
                 self.ref[i].SetBackgroundColour(self.boxbackgroundcolor)
                 self.ref[i].SetForegroundColour(self.exccol[self.exclusion_array[i]])
                 self.ref[i].Hide()
@@ -1686,6 +1699,7 @@ class CheckSeqs(wx.Frame):
             self.run[nr].SetForegroundColour(self.exccol[0])
             self.acq[nr].SetForegroundColour(self.exccol[0])
             self.rec[nr].SetForegroundColour(self.exccol[0])
+            self.dir[nr].SetForegroundColour(self.exccol[0])
             self.ref[nr].SetForegroundColour(self.exccol[0])
             self.label[nr].SetForegroundColour(self.exccol[0])
             self.seqlabel[nr].SetForegroundColour(self.exccol[0])
@@ -1697,6 +1711,7 @@ class CheckSeqs(wx.Frame):
             self.task[nr].SetForegroundColour(self.exccol[1])
             self.run[nr].SetForegroundColour(self.exccol[1])
             self.rec[nr].SetForegroundColour(self.exccol[1])
+            self.dir[nr].SetForegroundColour(self.exccol[1])
             self.acq[nr].SetForegroundColour(self.exccol[1])
             self.ref[nr].SetForegroundColour(self.exccol[1])
             self.label[nr].SetForegroundColour(self.exccol[1])
@@ -1727,6 +1742,9 @@ class CheckSeqs(wx.Frame):
             self.rec[nr].Show()
             self.rec[nr].SetValue(self.rec_name_list[nr])
 
+            self.dir[nr].Show()
+            self.dir[nr].SetValue(self.dir_name_list[nr])
+
             self.label[nr].SetItems(self.funclabel)
             self.label[nr].SetSelection(0)
             self.label[nr].SetForegroundColour(self.exccol[self.exclusion_array[nr]])
@@ -1747,7 +1765,10 @@ class CheckSeqs(wx.Frame):
 
             self.rec[nr].Show()
             self.rec[nr].SetValue(self.rec_name_list[nr])
-
+            
+            self.dir[nr].Show()
+            self.dir[nr].SetValue(self.dir_name_list[nr])
+            
             self.label[nr].SetItems(self.anatlabel)
             self.label[nr].SetSelection(0)
             self.label[nr].SetForegroundColour(self.exccol[self.exclusion_array[nr]])
@@ -1768,6 +1789,9 @@ class CheckSeqs(wx.Frame):
 
             self.rec[nr].Show()
             self.rec[nr].SetValue(self.rec_name_list[nr])
+            
+            self.dir[nr].Show()
+            self.dir[nr].SetValue(self.dir_name_list[nr])
 
             self.label[nr].SetItems(self.dwilabel)
             self.label[nr].SetSelection(0)
@@ -1787,8 +1811,11 @@ class CheckSeqs(wx.Frame):
             self.acq[nr].Show()
             self.acq[nr].SetValue(self.acq_name_list[nr])
 
-            self.rec[nr].Hide()
-            self.rec[nr].Clear()
+            self.dir[nr].Show()
+            self.dir[nr].SetValue(self.dir_name_list[nr])
+            
+            self.dir[nr].Hide()
+            self.dir[nr].Clear()
 
             self.label[nr].SetItems(self.fmaplabel)
             self.label[nr].SetSelection(0)
@@ -1810,6 +1837,9 @@ class CheckSeqs(wx.Frame):
 
             self.rec[nr].Hide()
             self.rec[nr].Clear()
+            
+            self.dir[nr].Hide()
+            self.dir[nr].Clear()
 
             self.label[nr].Hide()
             self.label[nr].Clear()
@@ -1830,6 +1860,7 @@ class CheckSeqs(wx.Frame):
         run2conv = []
         acq2conv = []
         rec2conv = []
+        dir2conv = []
         label2conv = []
         echo2conv = []
         fmapref = []
@@ -1873,6 +1904,11 @@ class CheckSeqs(wx.Frame):
                     rec2conv.append(self.rec[i].GetValue())
                 except:
                     rec2conv.append('')
+                    
+                try:
+                    dir2conv.append(self.dir[i].GetValue())
+                except:
+                    dir2conv.append('')
 
                 try:
                     label2conv.append(self.label[i].GetValue())
@@ -1901,10 +1937,10 @@ class CheckSeqs(wx.Frame):
         run2conv = [x.encode('UTF8') for x in run2conv]
         acq2conv = [x.encode('UTF8') for x in acq2conv]
         rec2conv = [x.encode('UTF8') for x in rec2conv]
+        dir2conv = [x.encode('UTF8') for x in dir2conv]
         label2conv = [x.encode('UTF8') for x in label2conv]
 
-        CheckFilename(folder2conv, self.subjectnumber, self.sessionnumber, task2conv, acq2conv, run2conv, rec2conv,
-                      label2conv)
+        CheckFilename(folder2conv, self.subjectnumber, self.sessionnumber, task2conv, acq2conv, run2conv, rec2conv, dir2conv, label2conv)
 
     def onbutton(self, event):
         b = event.GetEventObject().GetName()
@@ -1916,6 +1952,7 @@ class CheckSeqs(wx.Frame):
         run2conv = []
         acq2conv = []
         rec2conv = []
+        dir2conv = []
         label2conv = []
         echo2conv = []
         fmapref = []
@@ -1971,6 +2008,11 @@ class CheckSeqs(wx.Frame):
                     rec2conv.append(self.rec[i].GetValue())
                 except:
                     rec2conv.append('')
+                    
+                try:
+                    dir2conv.append(self.dir[i].GetValue())
+                except:
+                    dir2conv.append('')
 
                 try:
                     label2conv.append(self.label[i].GetValue())
@@ -2012,12 +2054,13 @@ class CheckSeqs(wx.Frame):
         run2conv = [x.encode('UTF8') for x in run2conv]
         acq2conv = [x.encode('UTF8') for x in acq2conv]
         rec2conv = [x.encode('UTF8') for x in rec2conv]
+        dir2conv = [x.encode('UTF8') for x in dir2conv]
         label2conv = [x.encode('UTF8') for x in label2conv]
 
         self.Close()
 
         Convert2BIDS(self.pathdicom, self.subjectnumber, self.subjectgroup, self.sessionnumber, self.subjtext2log,
-                     self.outputdir, self.dcmfiles, folder2conv, folderindex, task2conv, run2conv, acq2conv, rec2conv,
+                     self.outputdir, self.dcmfiles, folder2conv, folderindex, task2conv, run2conv, acq2conv, rec2conv, dir2conv,
                      label2conv, fmapref, self.un_seq, self.acq_time, self.patinfo, echo2conv, scantime2conv)
 
 
@@ -2031,7 +2074,7 @@ class CheckSeqs(wx.Frame):
 
 class Convert2BIDS:
     def __init__(self, pathdicom, subjectnumber, subjectgroup, sessionnumber, subjtext2log, outputdir, dcmfiles, 
-                 folder2conv, folderindex, task2conv, run2conv, acq2conv, rec2conv, label2conv, fmapref, seqlabel2conv, 
+                 folder2conv, folderindex, task2conv, run2conv, acq2conv, rec2conv, dir2conv, label2conv, fmapref, seqlabel2conv, 
                  acq_time, patinfo, echo2conv, scantime2conv):
 
         # create subject number
@@ -2104,9 +2147,14 @@ class Convert2BIDS:
                 rec1 = ""
             else:
                 rec1 = "_rec-" + rec2conv[ii]
+            
+            if dir2conv[ii] == "":
+                dir1 = ""
+            else:
+                dir1 = "_dir-" + dir2conv[ii]
 
-            nf_list.append(sub1 + sess1 + task1 + acq1 + run1 + rec1 + "_" + label2conv[ii])
-            fmap_list.append(folder2conv[ii] + "/" + sub1 + sess1 + task1 + acq1 + run1 + rec1 + "_" + label2conv[ii] + ".nii.gz")
+            nf_list.append(sub1 + sess1 + task1 + acq1 + run1 + rec1 + dir1 + "_" + label2conv[ii])
+            fmap_list.append(folder2conv[ii] + "/" + sub1 + sess1 + task1 + acq1 + run1 + rec1 + dir1 + "_" + label2conv[ii] + ".nii.gz")
 
         dup = [x for n, x in enumerate(nf_list) if x in nf_list[:n]]
         if len(dup) > 0:
@@ -2345,6 +2393,11 @@ class Convert2BIDS:
             else:
                 rec1 = "_rec-" + rec2conv[ii]
 
+            if dir2conv[ii] == "":
+                dir1 = ""
+            else:
+                dir1 = "_dir-" + dir2conv[ii]
+
             if nrecho > 1:
                 echocount = 1
 
@@ -2362,13 +2415,13 @@ class Convert2BIDS:
                 if nrecho > 1:
                     echo1 = "_echo-" + str(echocount)
                     if folder2conv[ii] == 'fmap':
-                        newfilename = sub1 + sess1 + task1 + acq1 + rec1 + run1 + "_" + label2conv[ii] + str(echocount)
+                        newfilename = sub1 + sess1 + task1 + acq1 + rec1 + run1 + dir1 +"_" + label2conv[ii] + str(echocount)
                     else:
-                        newfilename = sub1 + sess1 + task1 + acq1 + rec1 + run1  + echo1 + "_" + label2conv[ii]
+                        newfilename = sub1 + sess1 + task1 + acq1 + rec1 + run1  + dir1 + echo1 + "_" + label2conv[ii]
 
                     echocount += 1
                 else:
-                    newfilename = sub1 + sess1 + task1 + acq1 + rec1 + run1 + "_" + label2conv[ii]
+                    newfilename = sub1 + sess1 + task1 + acq1 + rec1 + run1 + dir1 + "_" + label2conv[ii]
 
                 fn = os.path.splitext(os.path.basename(filename))
 
@@ -3157,7 +3210,7 @@ class BIDSspecs:
 
 
 class CheckFilename:
-    def __init__(self, folder2conv, subjnum, sessionnumber, task2conv, acq2conv, run2conv, rec2conv, label2conv):
+    def __init__(self, folder2conv, subjnum, sessionnumber, task2conv, acq2conv, run2conv, rec2conv, dir2conv, label2conv):
 
         # Check new filenames for duplicates
         # -------------------------------------
@@ -3202,9 +3255,14 @@ class CheckFilename:
                 rec1 = ""
             else:
                 rec1 = "_rec-" + rec2conv[ii]
+                
+            if dir2conv[ii] == "":
+                dir1 = ""
+            else:
+                dir1 = "_dir-" + dir2conv[ii]
 
-            nf_list.append(sub1 + sess1 + task1 + acq1 + run1 + rec1 + "_" + label2conv[ii])
-            nf_list2.append(".../" + folder2conv[ii] + "/" + sub1 + sess1 + task1 + acq1 + run1 + rec1 + "_" +
+            nf_list.append(sub1 + sess1 + task1 + acq1 + run1 + rec1 + dir1 + "_" + label2conv[ii])
+            nf_list2.append(".../" + folder2conv[ii] + "/" + sub1 + sess1 + task1 + acq1 + run1 + rec1 + dir1 + "_" +
                             label2conv[ii])
 
         dup = [x for n, x in enumerate(nf_list2) if x in nf_list2[:n]]
